@@ -25,7 +25,6 @@ int BT=0;             //藍芽立刻存值
 long int number=0;    //藍芽立刻收值，一個一個疊加
 long int numberok=0;  //藍芽儲存收值，直到下一個傳送近來才改變
 char val;             // 儲存接收資料的變數
-
 int j = 0;            //平板撐進度
 int k = 0;            //表示流程進度走到哪一段
 int k1 = 0;
@@ -77,7 +76,7 @@ void setup() {
   delay(100);
     
   SelectPlayerDevice(0x02);       // Select SD card as the player device.
-  SetVolume(0x18);                // SetVolume(0x0E); Set the volume, the range is 0x00 to 0x1E.
+  SetVolume(0x15);                // SetVolume(0x0E); Set the volume, the range is 0x00 to 0x1E.
   delay(1000);
 }
 
@@ -89,19 +88,7 @@ void loop()
 
   delay(1);
   len = 0;
-  /*動作
-  偵測藍芽有沒有東西　　　　　　　　　　　　　　　　　　　　　　　　　　　　ｋ　＝０
-  （藍芽有東西）收值
-  把值拿來 Delay　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　ｋ　＝１　不要再偵測藍芽
-  開始撥放起床音樂（０，０，０）　　　　　　　　　　　　　　　　　　　　　　ｋ　＝１
-  （感測有起床）撥放靜坐音樂（１）　　　　　　　　　　　　　　　　　　　　　可能要分段delay感測
-  （感測沒起床）撥放起床音樂，直到感測起床，回到（感測有起床）
-  撥完靜坐音樂　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　ｋ　＝２　不再走起床靜坐
-  提示音樂換平板　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　ｋ　＝２　
-  （感測有換做）紀錄是否跌下　撥音樂？  　　　　　　　　　　　　　　　　　　ｋ４，ｋ５　作用中
-  （感測沒換做）撥放起床音樂，直到感測平板，回到（感測有換做）
-  回饋音樂　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　ｋ　＝０
-  */
+
   Serial.print(k);Serial.print('\t');Serial.print(k1);Serial.print('\t');Serial.print(k2);Serial.print('\t');Serial.print(k3);Serial.print('\t');Serial.print(k4);Serial.print('\t');Serial.print(k5);
   Serial.print("--狀態--");
   Serial.print(u1S);Serial.print('\t');Serial.print(u2S);Serial.print('\t');Serial.print(u3S);
@@ -127,11 +114,11 @@ void loop()
     if(numberok!=0){                              //numberok 有收到值才動作
       Serial.println(numberok);
       numberok=numberok/60;                     //方便測試加快速度 numberok/60 一分鐘變一秒
-      if(numberok>=160000){                       //如果手機設的時間超過 2分40秒 = 160秒 = 160'000
-        delay(numberok-160000);                   //我讓她先delay (設定時間-160'000)秒        
+      if(numberok>=180000){                       //如果手機設的時間超過 3分00秒 = 180秒 = 180'000
+        delay(numberok-180000);                   //我讓她先delay (設定時間-180'000)秒        
         digitalWrite(h1,HIGH);                     //開始發熱 
         digitalWrite(h2,HIGH);                     //開始發熱
-        delay(160000);                            //發熱 2分40秒
+        delay(180000);                            //發熱 3分00秒
       } else {
         digitalWrite(h1,HIGH);                     //開始發熱
         digitalWrite(h2,HIGH);                     //開始發熱
@@ -167,7 +154,7 @@ void loop()
          recv_cmd[1] = 'm';len++;Serial.print('m');
          recv_cmd[2] = '2';len++;Serial.println('2'); //靜坐
          Case();
-         delay(15000);                                //20sec...延遲前面靜坐音樂
+         delay(20000);                                //20sec...延遲前面靜坐音樂
          k2=2;
        }                                             //--------------------------------------k=1, k2=2 靜坐音樂
        analogWrite(lc, 150);                         //類比燈l = A0
@@ -178,7 +165,7 @@ void loop()
          recv_cmd[1] = 'm';len++;Serial.print('m');
          recv_cmd[2] = '3';len++;Serial.println('3'); //正確叮咚
          Case();
-         delay(5000);//3sec
+         delay(5000);//5sec
          k2=3;
          k=2;
        }                                             //---------------------------------------k=1, k2=3 正確提示       
@@ -204,7 +191,7 @@ void loop()
             recv_cmd[1] = 'm';len++;Serial.print('m');
             recv_cmd[2] = '3';len++;Serial.println('3');   //正確叮咚
             Case();
-            delay(1000);//3sec
+            delay(1000);//1sec
             recv_cmd[0] = 'P';len++;Serial.print('P');
             recv_cmd[1] = 'm';len++;Serial.print('m');
             recv_cmd[2] = '6';len++;Serial.println('6');
@@ -237,7 +224,7 @@ void loop()
           digitalWrite(l, LOW);
           k5++;
         }
-        delay(200);                                 // 250 = 25 秒
+        delay(250);                                 // 250 = 25 秒
         Serial.print(u1S);Serial.print('\t');Serial.print(u2S);Serial.print('\t');Serial.print(u3S);Serial.print('\t');Serial.print(k5);Serial.print('\t');Serial.println(j);
       }                                             //---------------------------------------k=2-1 偵測中間
       k4=2;                                         //---------------------------------------k=2-1, k4=2 跳出平板
@@ -246,7 +233,7 @@ void loop()
             recv_cmd[1] = 'm';len++;Serial.print('m');
             recv_cmd[2] = '3';len++;Serial.println('3');//正確叮咚
             Case();
-            delay(2500);//3sec
+            delay(2500);//2.5sec
             k4=3;
       }                                             //---------------------------------------k=2-1, k4=3
       if(k4==3 && k5==0){
