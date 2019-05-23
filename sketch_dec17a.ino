@@ -12,8 +12,8 @@ SoftwareSerial BTSerial(10, 9); // 接收, 傳送
 const int u1 = 11;    //紅
 const int u2 = 12;    //黃
 const int u3 = 13;    //紫
-const int lc = 4;     //進度漸進亮燈
-const int l = 5;      //平板撐正確燈
+const int lc = 5;     //進度漸進亮燈
+const int l = 4;      //平板撐正確燈
 const int h1 = 6;      //接上繼電器板子
 const int h2 = 7;      //接上繼電器板子
 //目前使用 13, 12, 11, 10, 9, , 7, 6, 5, 4, 3, 2,  
